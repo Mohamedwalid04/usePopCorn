@@ -1,35 +1,46 @@
 import { useEffect, useState } from "react";
 const KEY = "6be50efb";
-export function useMovies(query) {
+export function useMovies(query, callback) {
     const [movies, setMovies] = useState([])
     const [isLoading, setIsLaoding] = useState(false)
     const [error, setError] = useState("")
     useEffect(() => {
-        async function getMovies() {
-            setIsLaoding(true)
+        callback?.()
+        const Controller = new AbortController();
+        async function getData() {
             try {
+                setIsLaoding(true)
                 setError("")
-                const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
+                const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`, { signal: Controller.signal })
                 if (!res.ok) throw new Error
-                    ("There is Problem with fetch")
-                const data = await res.json()
+                    ("there is problem with fetching")
+                const data = await res.json();
                 if (data.Response === 'False') throw new Error
                     ("Movie not Found")
-                console.log(data.Search)
                 setMovies(data.Search)
                 setIsLaoding(false)
-            }
-            catch (err) {
-                setError(err.message)
+            } catch (err) {
+                if (err.name !== "AbortError") {
+
+                    setError(err.message)
+                }
             } finally {
                 setIsLaoding(false)
             }
+
         }
         if (!query.length) {
             setMovies([])
-            setError("")
+            setError("");
+            return;
+
         }
-        getMovies()
+        getData()
+
+
+        return () => {
+            Controller.abort()
+        }
     }, [query])
     return { movies, isLoading, error }
 }

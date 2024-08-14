@@ -53,7 +53,7 @@ export default function MovieDetails({ selectedID, handleBack, handleAddWatch })
         async function getMovieDetails() {
             try {
                 setIsLoading(true)
-                const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&i=${selectedID}`)
+                const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&i=${selectedID}`)
                 const data = await res.json()
                 setMovie(data)
                 setIsLoading(false)

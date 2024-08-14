@@ -7,7 +7,7 @@ export default function App() {
   const [query, setQuery] = useState("interstellar")
   const [selectedID, setSelectedID] = useState(null)
   const [watched, setWatched] = useState([])
-  const { movies, isLoading, error } = useMovies(query)
+  const { movies, isLoading, error } = useMovies(query, handleBack)
   function handleBack() {
     setSelectedID(null)
   }
